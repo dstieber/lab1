@@ -356,9 +356,10 @@ void render(Game *game)
 
     //draw all particles here
     glPushMatrix();
-    glColor3ub(150,160,220);
+    //glColor3ub(150,160,220);
     for (int i = 0; i < game->n; i++) {
 	Vec *c = &game->particle[i].s.center;
+    	glColor3ub(rand() % 150, rand() % 102 + 102, 255);
 	w = 2;
 	h = 2;
 	glBegin(GL_QUADS);
