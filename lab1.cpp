@@ -38,7 +38,7 @@
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
 
-#define MAX_PARTICLES 8000
+#define MAX_PARTICLES 40000
 #define GRAVITY 0.1
 
 //X Windows variables
@@ -61,6 +61,7 @@ struct Shape {
 struct Particle {
     Shape s;
     Vec velocity;
+    Vec color;
 };
 
 struct Game {
@@ -192,6 +193,9 @@ void makeParticle(Game *game, int x, int y) {
     p->s.center.y = y;
     p->velocity.y = rnd() - 0.5;
     p->velocity.x = rnd() - 0.5;
+    p->color.x = rand() % 50 + 100;
+    p->color.y = rand() % 102 + 102;
+    p->color.z = 255; 
     game->n++;
 }
 
@@ -277,7 +281,10 @@ void movement(Game *game)
 		//collision with box
 		p->s.center.y = game->box[j].center.y + game->box[j].height + 0.1;
 		p->velocity.y *= rnd() * -0.5;
-		p->velocity.x *= 1.01;
+		if (p->velocity.x < 0.0)
+		    p->velocity.x *= -1.01;
+		else
+		    p->velocity.x *= 1.01;
 	    }
 
 	}
@@ -327,8 +334,9 @@ void render(Game *game)
     }
 
     //draw circle
-    glColor3ub(255,255,255);
-    glBegin(GL_LINE_LOOP);
+    glColor3ub(90,140,90);
+    //glBegin(GL_LINE_LOOP);
+    glBegin(GL_TRIANGLE_FAN);
     for (int i = 0; i < n; i++) {
 	glVertex2i(
 		game->circle.center.x + vert[i].x,
@@ -359,7 +367,8 @@ void render(Game *game)
     //glColor3ub(150,160,220);
     for (int i = 0; i < game->n; i++) {
 	Vec *c = &game->particle[i].s.center;
-    	glColor3ub(rand() % 150, rand() % 102 + 102, 255);
+	Particle *p = &game->particle[i];
+	glColor3ub(p->color.x, p->color.y, p->color.z);
 	w = 2;
 	h = 2;
 	glBegin(GL_QUADS);
